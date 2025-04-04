@@ -1,0 +1,177 @@
+/* AwardsSection.css */
+* {
+    margin: 0;
+    padding: 0;
+  }
+  
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  
+  body {
+    overflow-x: hidden;
+    
+    text-transform: uppercase;
+    background-color: rgb(135, 255, 96);
+    color: black;
+  }
+  
+  .upper-container {
+    position: fixed;
+    width: 100%;
+    height: auto;
+    justify-content: center;
+    flex-direction: column;
+    font-weight: regular;
+    display: flex;
+   
+  }
+  
+  .upper-container span
+{
+    font-size: 30px;
+    padding-top: 30px;
+    color: black;
+    text-align: center;
+  }
+  .upper-container h1 {
+    padding-top: 100px ;
+    margin: 100px;
+  }
+  
+  .upper-container span {
+    font-size: 20px;
+  }
+  
+  .upper-container h1 {
+    font-size: 80px;
+    line-height: 1;
+  }
+  
+  .big-text-container {
+    position: relative;
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 100vh;
+    z-index: 10;
+  }
+  
+  .big-text {
+    font-size: 80px;
+    font-weight: bold;
+    transform-origin: center center;
+  }
+  
+  .imageBoard {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+  }
+  
+  .cardImage {
+    position: absolute;
+    width: 100%;
+    height: auto;
+    top: 50px;
+    text-align: center;
+    color: black;
+    font-weight: 900; /* Extra bold */
+    font-size: 40px; /* Larger font size */
+    opacity: 0;
+    z-index: 20;
+    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5); /* Add subtle text shadow for emphasis */
+    letter-spacing: 3px;
+  }
+  
+  .scaleableImg {
+    position: absolute;
+    width: 150px;
+    transition: transform 0.5s ease-out;
+  }
+  
+  /* Assign fixed positions to each image */
+  #scaleableImg1 {
+    top: 10px;
+    left: 10px;
+  }
+  
+  #scaleableImg2 {
+    top: 10px;
+    right: 10px;
+  }
+  
+  #scaleableImg3 {
+    bottom: 10px;
+    left: 10px;
+  }
+  
+  #scaleableImg4 {
+    bottom: 10px;
+    right: 10px;
+  }
+  
+  #scaleableImg5 {
+    top: 10%;
+    left: 10%;
+    transform: translate(-50%, -50%);
+  }
+  
+  
+  .boxes-section {
+    height: 200vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20vh;
+    margin-top: 20px;
+  }
+  
+  .boxes-section {
+    font-size: 50px;
+    margin-bottom: 100px;
+  }
+  
+  .three-container {
+    width: 100%;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+  }
+  
+  .sign-in-section {
+    height: 10vh;
+    margin-top: 100px;
+    margin-bottom: 100px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .sign-in-button {
+    padding: 20px 60px;
+    background-color: black;
+    color: white;
+    border: none;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: all 0.3s ease;
+  }
+  
+  .sign-in-button:hover {
+    transform: scale(1.05);
+    background-color: #000000;
+  }
+
+  
