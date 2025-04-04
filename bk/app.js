@@ -17,9 +17,7 @@ app.use(
   })
 );
 
-//
-
-app.use("/api");
+// app.use("/api");
 
 mongoose
   .connect(process.env.MONGO_URI)
