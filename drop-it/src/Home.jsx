@@ -3,6 +3,8 @@ import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 import * as THREE from 'three';
 import './AwardsSection.css';
+import { Link } from 'react-router-dom';
+
 
 const   Home = () => {
   
@@ -317,10 +319,11 @@ const   Home = () => {
   Our smart platform uses your location to list nearby waste centers and even recommends the right type of shop based on your waste. Whether it’s old electronics, plastic, or hazardous items — we've got the right place for it.
   Together, let’s make responsible disposal easy and accessible.
   </p>
+  <Link to ="/login">
   <div className="sign-in-section">
         <button className="sign-in-button">SIGN IN</button>
       </div>
-  
+      </Link>
 </div>
 
     </>
