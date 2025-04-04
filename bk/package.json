@@ -5,14 +5,16 @@
   "license": "ISC",
   "author": "",
   "type": "commonjs",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
+    "start": "node --env-file=.env app.js",
+    "dev": "node --watch --trace-warnings --env-file=.env app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "mongoose": "^8.13.2"
-  },
-  "devDependencies": {}
+  }
 }
