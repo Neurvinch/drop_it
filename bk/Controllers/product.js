@@ -1,61 +1,59 @@
-// routes/products.js
-const express = require('express');
-const Product = require('../Models/ProductSchema'); // Adjust path as needed
-const router = express.Router();
+const Product = require('../Models/ProductSchema');
+const Review = require('../Models/reviewSchema');
 
-// Create a new product
-router.post('/products', async (req, res) => {
-  const { name, description, category, condition, starting_price, image_urls } = req.body;
-
+// List a new product
+exports.createProduct = async (req, res) => {
+  const { name, description, category, price, stock, sellerId, imageUrl } = req.body;
   try {
-    const product = new Product({
-      name,
-      description,
-      category,
-      condition,
-      seller_id: req.user._id, // From auth middleware
-      starting_price,
-      current_price: starting_price,
-      image_urls,
-    });
+    const product = new Product({ name, description, category, price, stock, sellerId, imageUrl });
     await product.save();
-    res.status(201).json({
-      success: true,
-      message: 'Product created successfully',
-      data: product,
-    });
-  } catch (error) {
-    console.error('Error in createProduct:', error);
+    res.status(201).json(product);
+  } catch (err) {
+    console.error('Error creating product:', err);
     res.status(500).json({ message: 'Internal Server Error' });
   }
-});
+};
 
-// Get all unsold products
-router.get('/products', async (req, res) => {
+// Get all products with filter and search
+exports.getAllProducts = async (req, res) => {
+  const { search, category, minPrice, maxPrice } = req.query;
   try {
-    const products = await Product.find({ is_sold: false }).populate('seller_id', 'username');
+    let query = {};
+    if (search) query.name = { $regex: search, $options: 'i' };
+    if (category) query.category = category;
+    if (minPrice || maxPrice) query.price = {};
+    if (minPrice) query.price.$gte = Number(minPrice);
+    if (maxPrice) query.price.$lte = Number(maxPrice);
 
-    if (!products || products.length === 0) {
-      return res.status(404).json({ message: 'No products found' });
-    }
-
-    res.status(200).json({ success: true, data: products });
-  } catch (error) {
-    console.error('Error in getProducts:', error);
+    const products = await Product.find(query).populate('sellerId', 'username');
+    res.json(products);
+  } catch (err) {
+    console.error('Error getting products:', err);
     res.status(500).json({ message: 'Internal Server Error' });
   }
-});
+};
 
+// Get single product with reviews
+exports.getProductWithReviews = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id).populate('sellerId', 'username');
+    const reviews = await Review.find({ productId: req.params.id }).populate('userId', 'username');
+    res.json({ product, reviews });
+  } catch (err) {
+    console.error('Error getting product:', err);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
 
-
-
-// routes/products.js
-router.get('/:id/recommendations', async (req, res) => {
-  const product = await Product.findById(req.params.id);
-  const recommendations = await Product.find({
-    category: product.category,
-    _id: { $ne: product._id },
-  }).limit(5);
-  res.json(recommendations);
-});
-module.exports = router;
+// Add a review to a product
+exports.addReview = async (req, res) => {
+  const { userId, rating, comment } = req.body;
+  try {
+    const review = new Review({ productId: req.params.id, userId, rating, comment });
+    await review.save();
+    res.status(201).json(review);
+  } catch (err) {
+    console.error('Error adding review:', err);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};

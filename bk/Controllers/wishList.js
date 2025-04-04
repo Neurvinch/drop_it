@@ -1,11 +1,7 @@
-// Controllers/wishList.js
-const express = require('express');
-const Wishlist = require('../Models/wishListSchema'); // Adjusted case for consistency
-const router = express.Router();
-const identifier = require('../Middleware/identifier'); // Adjusted path and import
+const Wishlist = require('../Models/wishListSchema');
 
 // Add product to wishlist
-router.post('/:userId', identifier(['User', 'Vendor', 'Industrialist', 'Admin']), async (req, res) => {
+exports.addToWishlist = async (req, res) => {
   const { userId } = req.params;
   const { productId } = req.body;
 
@@ -26,10 +22,10 @@ router.post('/:userId', identifier(['User', 'Vendor', 'Industrialist', 'Admin'])
     console.error('Error adding to wishlist:', error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
-});
+};
 
 // Get user's wishlist
-router.get('/:userId', identifier(['User', 'Vendor', 'Industrialist', 'Admin']), async (req, res) => {
+exports.getWishlist = async (req, res) => {
   const { userId } = req.params;
 
   try {
@@ -43,10 +39,10 @@ router.get('/:userId', identifier(['User', 'Vendor', 'Industrialist', 'Admin']),
     console.error('Error fetching wishlist:', error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
-});
+};
 
 // Remove product from wishlist
-router.delete('/:userId/:productId', identifier(['User', 'Vendor', 'Industrialist', 'Admin']), async (req, res) => {
+exports.removeFromWishlist = async (req, res) => {
   const { userId, productId } = req.params;
 
   try {
@@ -64,6 +60,4 @@ router.delete('/:userId/:productId', identifier(['User', 'Vendor', 'Industrialis
     console.error('Error removing from wishlist:', error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
-});
-
-module.exports = router;
+};

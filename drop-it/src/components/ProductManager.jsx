@@ -16,22 +16,20 @@ const ProductManager = () => {
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [recommendations, setRecommendations] = useState([]);
   const token = localStorage.getItem('token');
-  const user = token ? jwtDecode(token) : null;
+  const user = token
 
   // Fetch unsold products on mount
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/products', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await axios.get('http://localhost:5000/api/products', );
         setProducts(res.data.data || []); // Fallback to empty array if no data
       } catch (error) {
         console.error('Error fetching products:', error);
       }
     };
     fetchProducts();
-  }, [token]);
+  }, []);
 
   // Fetch recommendations when a product is selected
   useEffect(() => {
@@ -39,16 +37,14 @@ const ProductManager = () => {
 
     const fetchRecommendations = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/products/${selectedProductId}/recommendations`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await axios.get(`http://localhost:5000/api/products/${selectedProductId}/recommendations`, );
         setRecommendations(res.data || []);
       } catch (error) {
         console.error('Error fetching recommendations:', error);
       }
     };
     fetchRecommendations();
-  }, [selectedProductId, token]);
+  }, [selectedProductId]);
 
   // Handle form input changes
   const handleChange = (e) => {
@@ -66,8 +62,8 @@ const ProductManager = () => {
         {
           ...formData,
           image_urls: formData.image_urls.split(',').map(url => url.trim()), // Convert comma-separated string to array
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
+        }
+     
       );
       setProducts([...products, res.data.data]);
       setFormData({

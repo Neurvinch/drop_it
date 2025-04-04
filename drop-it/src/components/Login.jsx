@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 
-import { jwtDecode } from "jwt-decode";
+
 
 const apiUrl = import.meta.env.VITE_API_URL;
 

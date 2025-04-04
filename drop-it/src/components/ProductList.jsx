@@ -1,17 +1,16 @@
 // src/components/ProductList.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useAuth } from '../auth';
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
-  const { token } = useAuth();
+ 
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/products`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/products`, 
+      
+      );
       setProducts(res.data);
     };
     fetchProducts();
