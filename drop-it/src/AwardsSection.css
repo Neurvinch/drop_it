@@ -1,8 +1,4 @@
-/* AwardsSection.css */
-* {
-    margin: 0;
-    padding: 0;
-  }
+
   
   ::-webkit-scrollbar {
     display: none;
@@ -12,7 +8,7 @@
     overflow-x: hidden;
     
     text-transform: uppercase;
-    background-color: rgb(135, 255, 96);
+    background-color: #87ff60;
     color: black;
   }
   
