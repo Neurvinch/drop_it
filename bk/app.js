@@ -3,8 +3,8 @@ const mongoose = require("mongoose");
 const Auth = require("./Controllers/Auth")
 const http = require('http');
 const { Server } = require('socket.io');
-const Auction = require("./Controllers/auction");
-const bid = require("./Controllers/bid");
+const Auction = require("./Routes/auction");
+const scrap = require("./Routes/Scrap")
 const cart = require("./Controllers/cart");
 const order = require("./Controllers/order");
 const product = require("./Routes/product");
@@ -35,7 +35,7 @@ app.use(
 
 app.set('io', io);
 
-app.use("/api", Auth , wishlist, product, profile);
+app.use("/api", Auth ,  product, profile, scrap ,Auction );
 
 mongoose
   .connect(process.env.MONGO_URI)

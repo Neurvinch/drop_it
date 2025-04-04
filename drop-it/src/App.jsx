@@ -8,6 +8,7 @@ import AuctionList from './components/AuctionList';
 import BidForm from './components/BidForm';
 import NotificationPanel from './components/NotificationPanel';
 import ProductManager from './components/ProductManager';
+import Dashboard from './components/Dashboard';
 import './App.css';
 import Home from './Home';
 
@@ -22,12 +23,14 @@ function App() {
             <Route path="/" element={<Home/>} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/products" element={<ProductList />} />
+            <Route path="/dashboard" element={<Dashboard/>
+            } />
             <Route path="/auctions" element={<AuctionList />} />
             <Route path="/bid/:auctionId" element={<BidForm />} />
             <Route path="/notifications" element={<NotificationPanel />} />
             <Route path='/create-Product' element={<ProductManager/>}   />
             <Route path="/" element={<Navigate to="/products" />} />
+
           </Routes>
         </div>
       </Router>

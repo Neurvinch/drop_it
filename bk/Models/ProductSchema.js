@@ -1,60 +1,15 @@
-const mongoose = require("mongoose");
+// Models/ProductSchema.js
+const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-  },
-  description: {
-    type: String,
-    required: true,
-  },
-  stock: {
-    type: Number,
-    required: true,
-    default: 1,
-  },
-
-  category: {
-    type: String,
-    required: true,
-  },
-  condition: {
-    type: String,
-    enum: ["New", "Used", "Refurbished"],
-    required: true,
-  },
-  ecoImpact: { type: Number, default: 0 },
-  seller_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "UserModel",
-    required: true,
-  },
-  starting_price: {
-    type: Number,
-    required: true,
-  },
-  current_price: {
-    type: Number,
-    required: true,
-  },
-  is_sold: {
-    type: Boolean,
-    default: false,
-  },
-  image_urls: {
-    type: [String],
-    required: true,
-  },
-
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now,
-  },
+  name: { type: String, required: true },
+  description: { type: String, required: true },
+  category: { type: String, required: true }, // e.g., Glass, Furniture
+  price: { type: Number, required: true },
+  seller_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Industrialist
+  is_sold: { type: Boolean, default: false },
+  image_urls: { type: [String], default: [] },
+  created_at: { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model("ProductModel", productSchema);
+module.exports = mongoose.model('Product', productSchema);
