@@ -39,12 +39,10 @@ const Dashboard = () => {
         setScraps(scrapRes.data.data || []);
         setAuctions(auctionRes.data.data || []);
         setProducts(productRes.data.data || []);
-        console.log('Scraps:', scrapRes.data.data);
         console.log('Auctions:', auctionRes.data.data);
-        console.log('Products:', productRes.data.data);
       } catch (error) {
         console.error('Fetch error:', error.response?.data || error.message);
-        setScraps([]); // Fallback to empty arrays
+        setScraps([]);
         setAuctions([]);
         setProducts([]);
       }
@@ -181,25 +179,26 @@ const Dashboard = () => {
           </form>
 
           <h2>Vendor: Your Auctions</h2>
-          {auctions.filter(a => a.vendor_id?.username === user?.username).length === 0 ? <p>No auctions</p> : auctions.filter(a => a.vendor_id?.username === user?.username).map(auction => (
-            <div key={auction._id} style={{ borderBottom: '1px solid #ccc', margin: '10px 0' }}>
-              <p>{auction.title} - ₹{auction.current_price} - {auction.is_closed ? 'Closed' : 'Open'}</p>
-              {!auction.is_closed && <button onClick={() => closeAuction(auction._id)}>Close Auction</button>}
-            </div>
-          ))}
+    {auctions.filter(a => a.vendor_id?.username === user?.username).length === 0 ? <p>No auctions</p> : auctions.filter(a => a.vendor_id?.username === user?.username).map(auction => (
+      <div key={auction._id} style={{ borderBottom: '1px solid #ccc', margin: '10px 0' }}>
+        <p>{auction.title} - ₹{auction.current_price} - {auction.is_closed ? 'Closed' : 'Open'}</p>
+        {!auction.is_closed && <button onClick={() => closeAuction(auction._id)}>Close Auction</button>}
+      </div>
+    ))}
         </>
       )}
 
       {['Industrialist'].includes(role) && (
         <>
+         
           <h2>Industrialist: Active Auctions</h2>
-          {auctions.length === 0 ? <p>No auctions available</p> : auctions.map(auction => (
-            <div key={auction._id} style={{ borderBottom: '1px solid #ccc', margin: '10px 0' }}>
-              <p>{auction.title} - ₹{auction.current_price} (Ends: {new Date(auction.end_date).toLocaleDateString()})</p>
-              <input type="number" value={bidAmount} onChange={(e) => setBidAmount(e.target.value)} placeholder="Bid Amount" />
-              <button onClick={() => placeBid(auction._id)}>Place Bid</button>
-            </div>
-          ))}
+    {auctions.length === 0 ? <p>No auctions available</p> : auctions.map(auction => (
+      <div key={auction._id} style={{ borderBottom: '1px solid #ccc', margin: '10px 0' }}>
+        <p>{auction.title} - ₹{auction.current_price} (Ends: {new Date(auction.end_date).toLocaleDateString()})</p>
+        <input type="number" value={bidAmount} onChange={(e) => setBidAmount(e.target.value)} placeholder="Bid Amount" />
+        <button onClick={() => placeBid(auction._id)}>Place Bid</button>
+      </div>
+    ))}
 
           <h2>Industrialist: Post Recycled Product</h2>
           <form onSubmit={postProduct} style={{ marginBottom: '20px' }}>

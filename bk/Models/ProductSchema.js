@@ -6,7 +6,7 @@ const productSchema = new mongoose.Schema({
   description: { type: String, required: true },
   category: { type: String, required: true }, // e.g., Glass, Furniture
   price: { type: Number, required: true },
-  seller_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Industrialist
+  seller_id: { type: mongoose.Schema.Types.ObjectId, ref: 'UserModel', required: true }, // Industrialist
   is_sold: { type: Boolean, default: false },
   image_urls: { type: [String], default: [] },
   created_at: { type: Date, default: Date.now },
