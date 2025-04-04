@@ -58,6 +58,47 @@ mongoose
   //   socket.on('disconnect', () => console.log('User disconnected'));
   // });
 
+  io.on('connection', async (socket) => {
+    console.log('User connected:', socket.id);
+  
+    // Send initial messages
+    try {
+      console.log('Fetching initial messages...');
+      const messages = await Message.find().sort({ createdAt: -1 }).limit(50);
+      socket.emit('initMessages', messages.reverse());
+    } catch (err) {
+      console.error('Failed to load initial messages:', err);
+    }
+  
+  
+    socket.on('sendMessage', async (msg) => {
+      try {
+        const message = new Message(msg);
+        await message.save();
+        io.emit('message', message);
+      } catch (err) {
+        console.error('Failed to save message:', err);
+      }
+    });
+  
+  
+   
+  
+    
+  
+    socket.on('clearCanvas', () => {
+      io.emit('clearCanvas');
+    });
+  
+   
+   
+  
+    socket.on('disconnect', () => {
+      console.log('User disconnected:', socket.id);
+    });
+  });
+  
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`server is running on port ${PORT}`);

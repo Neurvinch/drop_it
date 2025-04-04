@@ -11,20 +11,33 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.2",
+<<<<<<< HEAD
     
    
     "three": "^0.175.0",
+=======
+>>>>>>> f3d1f8389c6e3e46eefa1f969f3cb58f28e5e50d
     "axios": "^1.8.4",
     "framer-motion": "^12.6.3",
     "gsap": "^3.12.7",
     "jwt-decode": "^4.0.0",
+    "lucide-react": "^0.487.0",
+    "geolib": "^3.3.4",
+   
+    "leaflet": "^1.9.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
+    "react-leaflet": "^5.0.0",
     "react-router-dom": "^7.5.0",
     "react-toastify": "^11.0.5",
     "socket.io-client": "^4.8.1",
+<<<<<<< HEAD
     "tailwindcss": "^4.1.2"
+=======
+    "tailwindcss": "^4.1.2",
+    "three": "^0.175.0"
+>>>>>>> f3d1f8389c6e3e46eefa1f969f3cb58f28e5e50d
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",

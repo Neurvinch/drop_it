@@ -11,6 +11,8 @@ import ProductManager from './components/ProductManager';
 import Dashboard from './components/Dashboard';
 import './App.css';
 import Home from './Home';
+import Chatbot from './components/ChatBot';
+import ChatRoom from './components/Chat';
 
 
 
@@ -25,8 +27,9 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/dashboard" element={<Dashboard/>
             } />
-            <Route path="/auctions" element={<AuctionList />} />
-            <Route path="/bid/:auctionId" element={<BidForm />} />
+            
+            <Route path="/chatbot" element={ <Chatbot/>} />
+            <Route path="/groupchat" element={<ChatRoom/>} />
             <Route path="/notifications" element={<NotificationPanel />} />
             <Route path='/create-Product' element={<ProductManager/>}   />
             <Route path="/" element={<Navigate to="/products" />} />

@@ -4,7 +4,6 @@ const router = express.Router();
 const Scrap = require('../Models/ScrapSchema');
 const identifier = require('../Middleware/identifier');
 
-// User posts a scrap for sale
 router.post('/scraps', identifier(['User']), async (req, res) => {
   const { name, description, category, weight, price } = req.body;
   try {
@@ -20,11 +19,10 @@ router.post('/scraps', identifier(['User']), async (req, res) => {
     res.status(201).json({ message: 'Scrap posted successfully', data: scrap });
   } catch (error) {
     console.error('Error posting scrap:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 });
 
-// Vendor buys a scrap
 router.post('/scraps/:id/buy', identifier(['Vendor']), async (req, res) => {
   try {
     const scrap = await Scrap.findById(req.params.id);
@@ -37,18 +35,19 @@ router.post('/scraps/:id/buy', identifier(['Vendor']), async (req, res) => {
     res.status(200).json({ message: 'Scrap purchased successfully', data: scrap });
   } catch (error) {
     console.error('Error buying scrap:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 });
 
-// Get all available scraps
 router.get('/scraps', async (req, res) => {
   try {
+    console.log('Fetching scraps...');
     const scraps = await Scrap.find({ is_sold: false }).populate('seller_id', 'username');
+    console.log('Scraps fetched:', scraps);
     res.status(200).json({ data: scraps });
   } catch (error) {
-    console.error('Error fetching scraps:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error('Error fetching scraps:', error.stack);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 });
 
