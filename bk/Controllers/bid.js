@@ -1,59 +1,75 @@
-const Bid = require("../Models/bidSchema");
-const Auction = require("../Models/auctionSchema");
-const Notification = require("../Models/notificationSchema");
+// routes/bids.js
+const express = require('express');
+const Bid = require('../models/bidSchema'); // Adjust path as needed
+const Auction = require('../models/auctionSchema'); // Adjust path as needed
+const Notification = require('../models/notificationSchema'); // Adjust path as needed
 
-exports.placeBid = async (req, res) => {
+const router = express.Router();
+
+// Place a bid on an auction
+router.post('/', async (req, res) => {
   const { auction_id, bid_amount } = req.body;
+  const io = req.app.get('io'); // Access io from app
 
-  if (req.user.role !== "Industrialist") {
-    return res.status(403).json({ message: "Only Industrialists can bid" });
+  if (req.user.role !== 'Industrialist') {
+    return res.status(403).json({ message: 'Only Industrialists can bid' });
   }
 
   try {
+    // Fetch and validate auction
     const auction = await Auction.findById(auction_id);
     if (!auction || !auction.is_active) {
-      return res.status(400).json({ message: "Invalid or closed auction" });
+      return res.status(400).json({ message: 'Invalid or closed auction' });
     }
 
-    let previousHighestBid = null;
+    // Check against current highest bid
     if (auction.highest_bid_id) {
-      previousHighestBid = await Bid.findById(auction.highest_bid_id);
-      if (bid_amount <= previousHighestBid.bid_amount) {
-        return res
-          .status(400)
-          .json({ message: "Bid must exceed current highest" });
+      const highestBid = await Bid.findById(auction.highest_bid_id);
+      if (bid_amount <= highestBid.bid_amount) {
+        return res.status(400).json({ message: 'Bid must exceed current highest' });
       }
+      highestBid.is_winning = false;
+      await highestBid.save();
     }
 
+    // Create and save new bid
     const bid = new Bid({
       auction_id,
       bidder_id: req.user.id,
       bid_amount,
       is_winning: true,
-      bid_time: new Date(),
     });
-
     await bid.save();
+
+    // Update auction
     auction.highest_bid_id = bid._id;
     await auction.save();
 
-    // Mark previous highest bid as non-winning
-    if (previousHighestBid) {
-      previousHighestBid.is_winning = false;
-      await previousHighestBid.save();
+    // Emit real-time bid update
+    io.to(auction_id).emit('bidUpdate', {
+      auction_id,
+      bid_amount,
+      bidder_id: req.user.id,
+    });
 
-      // Notify the previous highest bidder
-      const notification = new Notification({
-        user_id: previousHighestBid.bidder_id,
-        message: `Your bid on auction ${auction_id} was outbid!`,
-        type: "BidUpdate",
-      });
-
-      await notification.save();
+    // Notify previous bidder
+    if (auction.highest_bid_id !== bid._id) {
+      const prevBidder = await Bid.findOne({ auction_id, is_winning: false }).sort({ bid_time: -1 });
+      if (prevBidder) {
+        const notification = new Notification({
+          user_id: prevBidder.bidder_id,
+          message: `Your bid on auction ${auction_id} was outbid!`,
+          type: 'BidUpdate',
+        });
+        await notification.save();
+        io.to(prevBidder.bidder_id.toString()).emit('notification', notification);
+      }
     }
 
     res.status(201).json(bid);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
-};
+});
+
+module.exports = router;

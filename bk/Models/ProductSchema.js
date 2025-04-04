@@ -9,6 +9,12 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  stock: {
+    type: Number,
+    required: true,
+    default: 1,
+  },
+
   category: {
     type: String,
     required: true,
@@ -18,6 +24,7 @@ const productSchema = new mongoose.Schema({
     enum: ["New", "Used", "Refurbished"],
     required: true,
   },
+  ecoImpact: { type: Number, default: 0 },
   seller_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "UserModel",
