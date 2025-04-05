@@ -1,7 +1,7 @@
 // routes/auctions.js
 const express = require('express');
-const Auction = require('../models/Auction'); // Adjust path as needed
-const Product = require('../models/Product'); // Adjust path as needed
+const Auction = require('../models/auctionSchema'); // Adjust path as needed
+const Product = require('../Models/ProductSchema');
 const router = express.Router();
 
 // Create a new auction

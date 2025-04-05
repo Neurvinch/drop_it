@@ -1,8 +1,8 @@
 // routes/bids.js
 const express = require('express');
-const Bid = require('../models/Bid'); // Adjust path as needed
-const Auction = require('../models/Auction'); // Adjust path as needed
-const Notification = require('../models/Notification'); // Adjust path as needed
+const Bid = require('../models/bidSchema'); // Adjust path as needed
+const Auction = require('../models/auctionSchema'); // Adjust path as needed
+const Notification = require('../models/notificationSchema'); // Adjust path as needed
 
 const router = express.Router();
 

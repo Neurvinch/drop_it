@@ -1,256 +1,243 @@
-const jwt = require("jsonwebtoken");
-const { doHash, doHashValidation, hmacProcess } = require("../utils/hasing");
+// routes/auth.js
+const express = require('express');
+const jwt = require('jsonwebtoken');
+const { doHash, doHashValidation, hmacProcess } = require('../utils/hashing'); // Adjust path as needed
+const UserModel = require('../Models/UserSchema'); // Adjust path as needed
+const nodemailer = require('nodemailer'); // Assuming transport is from nodemailer
+const router = express.Router();
 
-const userModel = require("../Models/UserSchema");
-
-exports.register = async (req, res) => {
+// Register a new user
+router.post('/register', async (req, res) => {
   const { username, password, email, roles } = req.body;
 
   try {
-    const existingUser = await userModel.findOne({ rollNo });
-
+    const existingUser = await UserModel.findOne({ username }); // Fixed from rollNo
     if (existingUser) {
       return res.status(400).json({
         success: false,
-        message: "User already exists",
+        message: 'User already exists',
       });
     }
 
     const hashedPassword = await doHash(password, 12);
-
-    const newUser = new userModel({
+    const newUser = new UserModel({
       username,
       password: hashedPassword,
       email,
       roles,
     });
-
     const savedUser = await newUser.save();
     const userWithoutPassword = savedUser.toObject();
     delete userWithoutPassword.password;
 
     res.status(201).json({
       success: true,
-      message: "User saved successfully",
+      message: 'User saved successfully',
       user: userWithoutPassword,
     });
   } catch (error) {
     console.log(error);
     res.status(500).json({
       success: false,
-      message: "Internal Server Error",
+      message: 'Internal Server Error',
     });
   }
-};
+});
 
-exports.login = async (req, res) => {
+// Login a user
+router.post('/login', async (req, res) => {
   const { email, password } = req.body;
-  try {
-    const existingUser = await userModel.findOne({ email }).select("+password");
 
+  try {
+    const existingUser = await UserModel.findOne({ email }).select('+password');
     if (!existingUser) {
       return res.status(404).json({
         success: false,
-        message: "User not found",
+        message: 'User not found',
       });
     }
-    const isPasswordValid = await doHashValidation(
-      password,
-      existingUser.password
-    );
 
+    const isPasswordValid = await doHashValidation(password, existingUser.password);
     if (!isPasswordValid) {
       return res.status(401).json({
         success: false,
-        message: "Invalid password",
+        message: 'Invalid password',
       });
     }
 
     const token = jwt.sign(
-      {
-        userId: existingUser._id,
-        rollNo: existingUser.rollNo,
-        roles: existingUser.roles,
-      },
+      { userId: existingUser._id, username: existingUser.username, roles: existingUser.roles }, // Fixed from rollNo
       process.env.SECRET_KEY,
-      { expiresIn: "5h" }
+      { expiresIn: '5h' }
     );
 
-    res.cookie("Authorization", `Bearer ${token}`, {
+    res.cookie('Authorization', `Bearer ${token}`, {
       httpOnly: true,
-      expires: new Date(Date.now() + 3600000),
-      secure: process.env.NODE_ENV === "production",
+      expires: new Date(Date.now() + 3600000), // 1 hour
+      secure: process.env.NODE_ENV === 'production',
     });
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
-      message: "User logged in successfully",
-      token: token,
+      message: 'User logged in successfully',
+      token,
     });
   } catch (error) {
     console.log(error);
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
-};
+});
 
-exports.signOut = async (req, res) => {
-  res.clearCookie("Authorization");
+// Sign out a user
+router.post('/signout', (req, res) => {
+  res.clearCookie('Authorization');
   res.status(200).json({
     success: true,
-    message: "User signed out successfully",
+    message: 'User signed out successfully',
   });
-};
+});
 
-exports.changePassword = async (req, res) => {
-  const { username } = req.user;
+// Change password
+router.put('/change-password', async (req, res) => {
+  const { username } = req.user; // From auth middleware
   const { oldPassword, newPassword } = req.body;
+
   try {
-    const existingUser = await userModel
-      .findOne({ username })
-      .select("+password");
+    const existingUser = await UserModel.findOne({ username }).select('+password');
     if (!existingUser) {
       return res.status(404).json({
         success: false,
-        message: "User not found",
+        message: 'User not found',
       });
     }
 
-    const result = await doHashValidation(oldPassword, existingUser.password);
-
-    if (!result) {
+    const isValid = await doHashValidation(oldPassword, existingUser.password);
+    if (!isValid) {
       return res.status(400).json({
         success: false,
-        message: "Invalid old password",
+        message: 'Invalid old password',
       });
     }
 
-    const hashedpassword = await doHash(newPassword, 12);
-
-    existingUser.password = hashedpassword;
-
+    const hashedPassword = await doHash(newPassword, 12);
+    existingUser.password = hashedPassword;
     await existingUser.save();
-    return res.status(200).json({
+
+    res.status(200).json({
       success: true,
-      message: "Password changed successfully",
+      message: 'Password changed successfully',
     });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
-};
-exports.sendForgotPasswordCode = async (req, res) => {
+});
+
+// Send forgot password code
+const transport = nodemailer.createTransport({
+  service: 'gmail',
+  auth: { user: 'naveenpandian68@gmail.com', pass: process.env.EMAIL_PASS },
+});
+
+router.post('/forgot-password', async (req, res) => {
   const { email } = req.body;
 
   try {
-    const exisitingUser = await userModel.findOne({ email });
-
-    if (!exisitingUser) {
+    const existingUser = await UserModel.findOne({ email });
+    if (!existingUser) {
       return res.status(404).json({
         success: false,
-        message: "User not found",
+        message: 'User not found',
       });
     }
 
     const codeValue = Math.floor(Math.random() * 1000000).toString();
-    let info = await transport.sendMail({
-      from: "naveenpandian68@gmail.com",
-      to: exisitingUser.email,
-      subject: "Password Reset Code",
-      html: "<h1>" + codeValue + "<h1>",
+    const info = await transport.sendMail({
+      from: 'naveenpandian68@gmail.com',
+      to: existingUser.email,
+      subject: 'Password Reset Code',
+      html: `<h1>${codeValue}</h1>`,
     });
 
-    if (info.accepted[0] === exisitingUser.email) {
-      const hashedCodeValue = hmacProcess(codeValue, "123456");
-
-      exisitingUser.forgotPasswordCode = hashedCodeValue;
-
-      exisitingUser.forgotPasswordCodeValidation = Date.now();
-
-      await exisitingUser.save();
+    if (info.accepted[0] === existingUser.email) {
+      const hashedCodeValue = hmacProcess(codeValue, '123456');
+      existingUser.forgotPasswordCode = hashedCodeValue;
+      existingUser.forgotPasswordCodeValidation = Date.now();
+      await existingUser.save();
 
       res.status(200).json({
         success: true,
-        message: "Code sent successfully",
+        message: 'Code sent successfully',
       });
     }
   } catch (error) {
     console.error(error);
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
-};
+});
 
-exports.verifyForgotPasswordCode = async (req, res) => {
+// Verify forgot password code and reset password
+router.post('/verify-forgot-password', async (req, res) => {
   const { email, providedCode, newPassword } = req.body;
 
   try {
     const code = providedCode.toString();
-
-    const existingUser = await userModel
-      .findOne({ email })
-      .select("+forgotPasswordCode +forgotPasswordCodeValidation");
+    const existingUser = await UserModel.findOne({ email }).select('+forgotPasswordCode +forgotPasswordCodeValidation');
     if (!existingUser) {
       return res.status(404).json({
         success: false,
-        message: "User not found",
+        message: 'User not found',
       });
     }
 
-    if (
-      !existingUser.forgotPasswordCode ||
-      !existingUser.forgotPasswordCodeValidation
-    ) {
+    if (!existingUser.forgotPasswordCode || !existingUser.forgotPasswordCodeValidation) {
       return res.status(400).json({
         success: false,
-        message: "Code not sent",
+        message: 'Code not sent',
       });
     }
 
-    if (
-      Date.now() - existingUser.forgotPasswordCodeValidation >
-      10 * 60 * 1000
-    ) {
+    if (Date.now() - existingUser.forgotPasswordCodeValidation > 10 * 60 * 1000) {
       return res.status(400).json({
         success: false,
-        message: "Code expired",
+        message: 'Code expired',
       });
     }
 
-    const hashedValue = hmacProcess(code, "123456");
-
-    if (hashedValue === existingUser.forgotPasswordCode) {
-      const hashedPassword = await doHash(newPassword, 12);
-
-      existingUser.password = hashedPassword;
-
-      existingUser.forgotPasswordCode = undefined;
-
-      existingUser.forgotPasswordCodeValidation = undefined;
-
-      await existingUser.save();
-
-      return res.status(200).json({
-        success: true,
-        message: "Password changed successfully",
+    const hashedValue = hmacProcess(code, '123456');
+    if (hashedValue !== existingUser.forgotPasswordCode) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid code',
       });
     }
-    return res.status(400).json({
-      success: false,
-      message: "Invalid code",
+
+    const hashedPassword = await doHash(newPassword, 12);
+    existingUser.password = hashedPassword;
+    existingUser.forgotPasswordCode = undefined;
+    existingUser.forgotPasswordCodeValidation = undefined;
+    await existingUser.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Password changed successfully',
     });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
-      message: "Internal Server Error",
+      message: 'Internal Server Error',
     });
   }
-};
+});
+
+module.exports = router;

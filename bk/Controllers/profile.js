@@ -1,6 +1,6 @@
 // routes/users.js
 const express = require('express');
-const UserModel = require('../models/UserModel'); // Adjust path as needed
+const UserModel = require('../Models/UserSchema'); // Adjust path as needed
 const router = express.Router();
 
 // Get user profile
@@ -44,8 +44,8 @@ router.put('/profile', async (req, res) => {
 module.exports = router;
 // routes/products.js
 
-const Product = require('../models/Product');
-const Review = require('../models/Review');
+const Product = require('../Models/ProductSchema');
+const Review = require('../Models/reviewSchema');
 
 // List a new product (Industrialist only)
 router.post('/', async (req, res) => {

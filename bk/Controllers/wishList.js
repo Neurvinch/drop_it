@@ -1,6 +1,6 @@
 
 const express = require('express');
-const Wishlist = require('../models/Wishlist');
+const Wishlist = require('../Models/wishListSchema');
 const router = express.Router();
 
 

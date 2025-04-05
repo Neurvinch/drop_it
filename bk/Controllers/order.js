@@ -1,7 +1,7 @@
 // routes/orders.js
 const express = require('express');
-const Order = require('../models/Order');
-const Product = require('../models/Product');
+const Order = require('../Models/orderSchema');
+const Product = require('../Models/ProductSchema');
 const router = express.Router();
 
 // Place an order (simplified for Razorpay)

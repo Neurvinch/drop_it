@@ -1,9 +1,10 @@
 // routes/transactions.js
 const express = require('express');
-const Transaction = require('../models/Transaction'); // Adjust path as needed
-const Product = require('../models/Product'); // Adjust path as needed
-const Auction = require('../models/Auction'); // Adjust path as needed
+const Transaction = require('../Models/transactionSchema'); // Adjust path as needed
+const Product = require('../Models/ProductSchema'); // Adjust path as needed
+// Adjust path as needed
 const mongoose = require('mongoose');
+const auctionSchema = require('../models/auctionSchema');
 const router = express.Router();
 
 // Create a transaction after an auction
@@ -15,7 +16,7 @@ router.post('/', async (req, res) => {
 
   try {
     // Fetch auction with highest bid
-    const auction = await Auction.findById(auction_id)
+    const auction = await auctionSchema.findById(auction_id)
       .populate('highest_bid_id')
       .session(session);
 

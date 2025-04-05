@@ -1,6 +1,6 @@
 // routes/cart.js
 const express = require('express');
-const Cart = require('../models/Cart');
+const Cart = require('../Models/cartSchema');
 const router = express.Router();
 
 // Get user's cart
