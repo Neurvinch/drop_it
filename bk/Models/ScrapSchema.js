@@ -7,8 +7,8 @@ const scrapSchema = new mongoose.Schema({
   category: { type: String, required: true }, // e.g., Metal, Plastic
   weight: { type: Number, required: true }, // in kg
   price: { type: Number, required: true },
-  seller_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // User
-  buyer_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // Vendor (null until sold)
+  seller_id: { type: mongoose.Schema.Types.ObjectId, ref: 'UserModel', required: true }, // UserModel
+  buyer_id: { type: mongoose.Schema.Types.ObjectId, ref: 'UserModel' }, // Vendor (null until sold)
   is_sold: { type: Boolean, default: false },
   created_at: { type: Date, default: Date.now },
 });

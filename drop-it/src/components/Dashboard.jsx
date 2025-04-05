@@ -13,7 +13,6 @@ const Dashboard = () => {
   const [bidAmount, setBidAmount] = useState('');
   const token = localStorage.getItem('token');
   
-  // Decode token and extract role
   let user = null;
   let role = 'Unknown';
   try {
@@ -25,12 +24,10 @@ const Dashboard = () => {
     console.error('Token decode error:', error);
   }
 
-  // Debug logs
   console.log('Token:', token);
   console.log('Decoded User:', user);
   console.log('Extracted Role:', role);
 
-  // Fetch data
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -46,13 +43,15 @@ const Dashboard = () => {
         console.log('Auctions:', auctionRes.data.data);
         console.log('Products:', productRes.data.data);
       } catch (error) {
-        console.error('Fetch error:', error.response?.data);
+        console.error('Fetch error:', error.response?.data || error.message);
+        setScraps([]); // Fallback to empty arrays
+        setAuctions([]);
+        setProducts([]);
       }
     };
     if (token) fetchData();
   }, [token]);
 
-  // Handlers
   const handleScrapChange = (e) => setScrapForm({ ...scrapForm, [e.target.name]: e.target.value });
   const handleAuctionChange = (e) => setAuctionForm({ ...auctionForm, [e.target.name]: e.target.value });
   const handleProductChange = (e) => setProductForm({ ...productForm, [e.target.name]: e.target.value });
@@ -136,9 +135,8 @@ const Dashboard = () => {
     <div style={{ padding: '20px' }}>
       <h1>Dashboard ({role})</h1>
       <p>Logged in as: {user?.username || 'Unknown'}</p>
-      <p>Role Debug: {role}</p> {/* Explicitly show role */}
+      <p>Role Debug: {role}</p>
 
-      {/* Role-specific sections */}
       {['User'].includes(role) && (
         <>
           <h2>User: Post Scrap</h2>
@@ -215,7 +213,6 @@ const Dashboard = () => {
         </>
       )}
 
-      {/* Fallback if role doesn't match */}
       {!['User', 'Vendor', 'Industrialist'].includes(role) && (
         <p>No specific dashboard content for role: {role}. Please check your token or login again.</p>
       )}
