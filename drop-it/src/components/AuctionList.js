@@ -1,36 +1,56 @@
-// src/components/AuctionList.js
+// src/components/AuctionManager.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useAuth } from '../auth';
-import { Link } from 'react-router-dom';
 
-const AuctionList = () => {
+const AuctionManager = () => {
   const [auctions, setAuctions] = useState([]);
-  const { token } = useAuth();
+  const [formData, setFormData] = useState({
+    product_id: '',
+    start_time: '',
+    end_time: '',
+    reserve_price: '',
+  });
 
   useEffect(() => {
     const fetchAuctions = async () => {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/auctions`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setAuctions(res.data);
+      const res = await axios.get('http://localhost:5000/api/auctions/active');
+      setAuctions(res.data.data);
     };
     fetchAuctions();
-  }, [token]);
+  }, []);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const createAuction = async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem('token'); // From login
+    const res = await axios.post('http://localhost:5000/api/auctions', formData, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setAuctions([...auctions, res.data.data]);
+    setFormData({ product_id: '', start_time: '', end_time: '', reserve_price: '' });
+  };
 
   return (
     <div>
       <h2>Active Auctions</h2>
-      <ul>
-        {auctions.map((auction) => (
-          <li key={auction.id}>
-            {auction.product_id.name} - Ends: {new Date(auction.end_time).toLocaleString()}
-            <Link to={`/bid/${auction.id}`}>Bid Now</Link>
-          </li>
-        ))}
-      </ul>
+      {auctions.map(auction => (
+        <div key={auction._id}>
+          <p>{auction.product_id.name} - Reserve: ₹{auction.reserve_price} by {auction.vendor_id.username}</p>
+        </div>
+      ))}
+      <h3>Create Auction</h3>
+      <form onSubmit={createAuction}>
+        <input name="product_id" value={formData.product_id} onChange={handleChange} placeholder="Product ID" required />
+        <input name="start_time" type="datetime-local" value={formData.start_time} onChange={handleChange} required />
+        <input name="end_time" type="datetime-local" value={formData.end_time} onChange={handleChange} required />
+        <input name="reserve_price" type="number" value={formData.reserve_price} onChange={handleChange} placeholder="Reserve Price" required />
+        <button type="submit">Create Auction</button>
+      </form>
     </div>
   );
 };
 
-export default AuctionList;
+export default AuctionManager;

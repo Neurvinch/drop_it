@@ -1,51 +1,54 @@
-// src/components/NotificationPanel.js
+// src/components/Notifications.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useAuth } from '../auth';
 import io from 'socket.io-client';
 
-const socket = io(process.env.REACT_APP_SOCKET_URL);
+const socket = io('http://localhost:5000');
 
-const NotificationPanel = () => {
+const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
-  const { token, user } = useAuth();
 
   useEffect(() => {
+    const token = localStorage.getItem('token'); // From login
     const fetchNotifications = async () => {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/notifications`, {
-        headers: { Authorization: `Bearer ${token}` }
+      const res = await axios.get('http://localhost:5000/api/notifications', {
+        headers: { Authorization: `Bearer ${token}` },
       });
       setNotifications(res.data);
     };
     fetchNotifications();
 
-    socket.on('notification', (notification) => {
-      setNotifications((prev) => [notification, ...prev]);
+    socket.emit('join', 'user_id_here'); // Replace with actual user ID from token
+    socket.on('notificationUpdate', (updatedNotification) => {
+      setNotifications(prev => 
+        prev.map(n => n._id === updatedNotification._id ? updatedNotification : n)
+      );
     });
-    return () => socket.off('notification');
-  }, [token]);
 
-  const markAsRead = async (id) => {
-    await axios.post(
-      `${process.env.REACT_APP_API_URL}/notifications/read`,
-      { notification_id: id },
+    return () => socket.off('notificationUpdate');
+  }, []);
+
+  const markAsRead = async (notificationId) => {
+    const token = localStorage.getItem('token');
+    await axios.put('http://localhost:5000/api/notifications/read', 
+      { notification_id: notificationId },
       { headers: { Authorization: `Bearer ${token}` } }
     );
-    setNotifications(notifications.map(n => n.id === id ? { ...n, is_read: true } : n));
   };
 
   return (
     <div>
       <h2>Notifications</h2>
-      <ul>
-        {notifications.map((n) => (
-          <li key={n.id}>
-            {n.message} - {n.is_read ? 'Read' : <button onClick={() => markAsRead(n.id)}>Mark as Read</button>}
-          </li>
-        ))}
-      </ul>
+      {notifications.map(notification => (
+        <div key={notification._id}>
+          <p>{notification.message} - {notification.is_read ? 'Read' : 'Unread'}</p>
+          {!notification.is_read && (
+            <button onClick={() => markAsRead(notification._id)}>Mark as Read</button>
+          )}
+        </div>
+      ))}
     </div>
   );
 };
 
-export default NotificationPanel;
+export default Notifications;

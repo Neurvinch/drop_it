@@ -1,9 +1,9 @@
-// routes/wishlist.js
+
 const express = require('express');
 const Wishlist = require('../models/Wishlist');
 const router = express.Router();
 
-// Add to wishlist
+
 router.post('/:userId', async (req, res) => {
   const { userId } = req.params;
   const { productId } = req.body;
@@ -14,13 +14,11 @@ router.post('/:userId', async (req, res) => {
   res.status(201).json(wishlist);
 });
 
-// Get user's wishlist
+
 router.get('/:userId', async (req, res) => {
   const wishlist = await Wishlist.find({ userId: req.params.userId }).populate('productId');
   res.json(wishlist);
 });
-
-// Remove from wishlist
 router.delete('/:userId/:productId', async (req, res) => {
   await Wishlist.deleteOne({ userId: req.params.userId, productId: req.params.productId });
   res.json({ message: 'Removed from wishlist' });

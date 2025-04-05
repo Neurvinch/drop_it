@@ -1,7 +1,11 @@
-const Product = require("../Models/ProductSchema");
-exports.createProduct = async (req, res) => {
-  const { name, description, category, condition, starting_price, image_urls } =
-    req.body;
+// routes/products.js
+const express = require('express');
+const Product = require('../models/Product'); // Adjust path as needed
+const router = express.Router();
+
+// Create a new product
+router.post('/', async (req, res) => {
+  const { name, description, category, condition, starting_price, image_urls } = req.body;
 
   try {
     const product = new Product({
@@ -9,7 +13,7 @@ exports.createProduct = async (req, res) => {
       description,
       category,
       condition,
-      seller_id: req.user._id,
+      seller_id: req.user._id, // From auth middleware
       starting_price,
       current_price: starting_price,
       image_urls,
@@ -17,31 +21,33 @@ exports.createProduct = async (req, res) => {
     await product.save();
     res.status(201).json({
       success: true,
-      message: "Product created successfully",
+      message: 'Product created successfully',
       data: product,
     });
   } catch (error) {
-    console.error("Error in createProduct:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    console.error('Error in createProduct:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
-};
+});
 
-exports.getProducts = async (req, res) => {
+// Get all unsold products
+router.get('/', async (req, res) => {
   try {
-    const products = await Product.find({
-      is_sold: false,
-    }).populate("seller_id", "username ");
+    const products = await Product.find({ is_sold: false }).populate('seller_id', 'username');
 
     if (!products || products.length === 0) {
-      return res.status(404).json({ message: "No products found" });
+      return res.status(404).json({ message: 'No products found' });
     }
 
     res.status(200).json({ success: true, data: products });
   } catch (error) {
-    console.error("Error in getProducts:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    console.error('Error in getProducts:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
-};
+});
+
+
+
 
 // routes/products.js
 router.get('/:id/recommendations', async (req, res) => {
@@ -52,3 +58,4 @@ router.get('/:id/recommendations', async (req, res) => {
   }).limit(5);
   res.json(recommendations);
 });
+module.exports = router;
