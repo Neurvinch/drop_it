@@ -1,32 +1,71 @@
 // routes/auctions.js
 const express = require('express');
 const router = express.Router();
-const Auction = require('../Models/auction'); // Adjust path as needed
-// Adjust path as needed
+const Auction = require('../Models/auction');
 const identifier = require('../Middleware/identifier');
 
-// Vendor creates an auction
 router.post('/auctions', identifier(['Vendor']), async (req, res) => {
   const { title, description, category, starting_price, end_date } = req.body;
+  console.log('Request body:', req.body);
+  console.log('User:', req.user);
+
   try {
-    const auction = new auction({
+    if (!title || !description || !category || !starting_price || !end_date) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    const parsedEndDate = new Date(end_date);
+    if (isNaN(parsedEndDate.getTime())) {
+      return res.status(400).json({ message: 'Invalid end_date format' });
+    }
+
+    const auction = new Auction({
       title,
       description,
       category,
-      starting_price,
-      current_price: starting_price,
+      starting_price: Number(starting_price),
+      current_price: Number(starting_price),
       vendor_id: req.user.userId,
-      end_date: new Date(end_date), // e.g., "2025-04-10"
+      end_date: parsedEndDate,
     });
+    console.log('Auction to save:', auction);
     await auction.save();
+    console.log('Auction saved:', auction);
     res.status(201).json({ message: 'Auction created successfully', data: auction });
   } catch (error) {
-    console.error('Error creating auction:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error('Error creating auction:', error.stack);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 });
 
-// Industrialist places a bid
+router.get('/auctions', async (req, res) => {
+  try {
+    console.log('Fetching auctions for:', req.user || 'No user');
+    console.log('Current date:', new Date());
+
+    // Original query
+    const activeAuctions = await Auction.find({ is_closed: false, end_date: { $gte: new Date() } })
+      .populate('vendor_id', 'username');
+    console.log('Active auctions (filtered):', activeAuctions);
+
+    // Debug: Fetch all auctions
+    const allAuctions = await Auction.find().populate('vendor_id', 'username');
+    console.log('All auctions in DB:', allAuctions);
+
+    // Debug: Why are auctions filtered out?
+    const closedAuctions = await Auction.find({ is_closed: true });
+    console.log('Closed auctions:', closedAuctions);
+    const expiredAuctions = await Auction.find({ end_date: { $lt: new Date() } });
+    console.log('Expired auctions:', expiredAuctions);
+
+    // Temporary: Return all auctions to see them in frontend
+    res.status(200).json({ data: allAuctions }); // Switch to activeAuctions once fixed
+  } catch (error) {
+    console.error('Error fetching auctions:', error.stack);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+});
+
 router.post('/auctions/:id/bid', identifier(['Industrialist']), async (req, res) => {
   const { amount } = req.body;
   try {
@@ -44,24 +83,11 @@ router.post('/auctions/:id/bid', identifier(['Industrialist']), async (req, res)
     await auction.save();
     res.status(200).json({ message: 'Bid placed successfully', data: auction });
   } catch (error) {
-    console.error('Error placing bid:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error('Error placing bid:', error.stack);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 });
 
-// Get all active auctions
-router.get('/auctions', async (req, res) => {
-  try {
-    const auctions = await Auction.find({ is_closed: false, end_date: { $gte: new Date() } })
-      .populate('vendor_id', 'username');
-    res.status(200).json({ data: auctions });
-  } catch (error) {
-    console.error('Error fetching auctions:', error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-});
-
-// Vendor closes auction and selects winner (manual for non-real-time)
 router.post('/auctions/:id/close', identifier(['Vendor']), async (req, res) => {
   try {
     const auction = await Auction.findById(req.params.id);
@@ -75,8 +101,8 @@ router.post('/auctions/:id/close', identifier(['Vendor']), async (req, res) => {
     await auction.save();
     res.status(200).json({ message: 'Auction closed', data: auction });
   } catch (error) {
-    console.error('Error closing auction:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error('Error closing auction:', error.stack);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 });
 
