@@ -42,11 +42,7 @@ const Dashboard = () => {
         console.log('Auctions:', auctionRes.data.data);
       } catch (error) {
         console.error('Fetch error:', error.response?.data || error.message);
-<<<<<<< HEAD
         setScraps([]); // Fallback to empty arrays
-=======
-        setScraps([]);
->>>>>>> f3d1f8389c6e3e46eefa1f969f3cb58f28e5e50d
         setAuctions([]);
         setProducts([]);
       }
@@ -134,7 +130,6 @@ const Dashboard = () => {
   if (!token) return <div>Please log in at /api/login (use curl or Postman)</div>;
 
   return (
-<<<<<<< HEAD
     <div className="bg-blue-200 min-h-screen">
     <div className="max-w-6xl mx-auto px-4 py-8">
       <header className="bg-white shadow-md rounded-lg p-6 mb-8">
@@ -143,13 +138,6 @@ const Dashboard = () => {
         <p className="text-xs text-gray-400">Role Debug: {role}</p>
       </header>
   
-=======
-    <div style={{ padding: '20px' }}>
-      <h1>Dashboard ({role})</h1>
-      <p>Logged in as: {user?.username || 'Unknown'}</p>
-      <p>Role Debug: {role}</p>
-
->>>>>>> f3d1f8389c6e3e46eefa1f969f3cb58f28e5e50d
       {['User'].includes(role) && (
         <div className="space-y-8">
           <div className="bg-white shadow-md rounded-lg p-6">
@@ -262,7 +250,6 @@ const Dashboard = () => {
       )}
   
       {['Vendor'].includes(role) && (
-<<<<<<< HEAD
         <div className="space-y-8">
           <div className="bg-white shadow-md rounded-lg p-6">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">Available Scraps</h2>
@@ -416,39 +403,9 @@ const Dashboard = () => {
             )}
           </div>
         </div>
-=======
-        <>
-          <h2>Vendor: Available Scraps</h2>
-          {scraps.length === 0 ? <p>No scraps available</p> : scraps.map(scrap => (
-            <div key={scrap._id} style={{ borderBottom: '1px solid #ccc', margin: '10px 0' }}>
-              <p>{scrap.name} - {scrap.weight}kg - ₹{scrap.price} by {scrap.seller_id?.username || 'Unknown'}</p>
-              <button onClick={() => buyScrap(scrap._id)}>Buy</button>
-            </div>
-          ))}
-
-          <h2>Vendor: Create Auction</h2>
-          <form onSubmit={postAuction} style={{ marginBottom: '20px' }}>
-            <input name="title" value={auctionForm.title} onChange={handleAuctionChange} placeholder="Title" required style={{ display: 'block', margin: '5px 0' }} />
-            <textarea name="description" value={auctionForm.description} onChange={handleAuctionChange} placeholder="Description" required style={{ display: 'block', margin: '5px 0' }} />
-            <input name="category" value={auctionForm.category} onChange={handleAuctionChange} placeholder="Category" required style={{ display: 'block', margin: '5px 0' }} />
-            <input name="starting_price" type="number" value={auctionForm.starting_price} onChange={handleAuctionChange} placeholder="Starting Price" required style={{ display: 'block', margin: '5px 0' }} />
-            <input name="end_date" type="date" value={auctionForm.end_date} onChange={handleAuctionChange} placeholder="End Date" required style={{ display: 'block', margin: '5px 0' }} />
-            <button type="submit">Create Auction</button>
-          </form>
-
-          <h2>Vendor: Your Auctions</h2>
-    {auctions.filter(a => a.vendor_id?.username === user?.username).length === 0 ? <p>No auctions</p> : auctions.filter(a => a.vendor_id?.username === user?.username).map(auction => (
-      <div key={auction._id} style={{ borderBottom: '1px solid #ccc', margin: '10px 0' }}>
-        <p>{auction.title} - ₹{auction.current_price} - {auction.is_closed ? 'Closed' : 'Open'}</p>
-        {!auction.is_closed && <button onClick={() => closeAuction(auction._id)}>Close Auction</button>}
-      </div>
-    ))}
-        </>
->>>>>>> f3d1f8389c6e3e46eefa1f969f3cb58f28e5e50d
       )}
   
       {['Industrialist'].includes(role) && (
-<<<<<<< HEAD
         <div className="space-y-8">
           <div className="bg-white shadow-md rounded-lg p-6">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">Active Auctions</h2>
@@ -553,31 +510,6 @@ const Dashboard = () => {
         </div>
       )}
   
-=======
-        <>
-         
-          <h2>Industrialist: Active Auctions</h2>
-    {auctions.length === 0 ? <p>No auctions available</p> : auctions.map(auction => (
-      <div key={auction._id} style={{ borderBottom: '1px solid #ccc', margin: '10px 0' }}>
-        <p>{auction.title} - ₹{auction.current_price} (Ends: {new Date(auction.end_date).toLocaleDateString()})</p>
-        <input type="number" value={bidAmount} onChange={(e) => setBidAmount(e.target.value)} placeholder="Bid Amount" />
-        <button onClick={() => placeBid(auction._id)}>Place Bid</button>
-      </div>
-    ))}
-
-          <h2>Industrialist: Post Recycled Product</h2>
-          <form onSubmit={postProduct} style={{ marginBottom: '20px' }}>
-            <input name="name" value={productForm.name} onChange={handleProductChange} placeholder="Name" required style={{ display: 'block', margin: '5px 0' }} />
-            <textarea name="description" value={productForm.description} onChange={handleProductChange} placeholder="Description" required style={{ display: 'block', margin: '5px 0' }} />
-            <input name="category" value={productForm.category} onChange={handleProductChange} placeholder="Category" required style={{ display: 'block', margin: '5px 0' }} />
-            <input name="price" type="number" value={productForm.price} onChange={handleProductChange} placeholder="Price" required style={{ display: 'block', margin: '5px 0' }} />
-            <input name="image_urls" value={productForm.image_urls} onChange={handleProductChange} placeholder="Image URLs (comma-separated)" style={{ display: 'block', margin: '5px 0' }} />
-            <button type="submit">Post Product</button>
-          </form>
-        </>
-      )}
-
->>>>>>> f3d1f8389c6e3e46eefa1f969f3cb58f28e5e50d
       {!['User', 'Vendor', 'Industrialist'].includes(role) && (
         <div className="bg-white shadow-md rounded-lg p-6 text-center">
           <div className="py-8">
