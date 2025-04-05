@@ -7,11 +7,11 @@ const Auction = require("./Controllers/auction");
 const bid = require("./Controllers/bid");
 const cart = require("./Controllers/cart");
 const order = require("./Controllers/order");
-const product = require("./Controllers/product");
-const profile = require("./Controllers/profile");
+const product = require("./Routes/product");
+const profile = require("./Routes/profile");
 const notification = require('./Controllers/notify');
 const transaction = require("./Controllers/transaction");
-const wishlist = require("./Controllers/wishList")
+const wishlist = require("./Routes/wishlist")
 const identifier = require("./Middleware/identifier");
 
 const cookieParser = require("cookie-parser");
@@ -34,8 +34,8 @@ app.use(
 );
 
 app.set('io', io);
-app.use('/api', identifier(['User', 'Vendor', 'Industrialist', 'Admin']));
-app.use("/api", Auth ,wishlist, Auction, bid, cart, order, product, profile, notification, transaction);
+
+app.use("/api", Auth , wishlist, product, profile);
 
 mongoose
   .connect(process.env.MONGO_URI)
@@ -46,17 +46,17 @@ mongoose
     console.log(error);
   });
 
-  io.on('connection', (socket) => {
-    console.log('User connected');
-    socket.on('join', (userId) => socket.join(userId)); // Join user-specific room
-    socket.on('disconnect', () => console.log('User disconnected'));
-  });
+  // io.on('connection', (socket) => {
+  //   console.log('User connected');
+  //   socket.on('join', (userId) => socket.join(userId)); // Join user-specific room
+  //   socket.on('disconnect', () => console.log('User disconnected'));
+  // });
 
-  io.on('connection', (socket) => {
-    console.log('User connected');
-    socket.on('join', (room) => socket.join(room)); // Join auction or user room
-    socket.on('disconnect', () => console.log('User disconnected'));
-  });
+  // io.on('connection', (socket) => {
+  //   console.log('User connected');
+  //   socket.on('join', (room) => socket.join(room)); // Join auction or user room
+  //   socket.on('disconnect', () => console.log('User disconnected'));
+  // });
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
