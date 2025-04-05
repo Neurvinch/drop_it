@@ -10,6 +10,8 @@ import BidForm from './components/BidForm';
 import NotificationPanel from './components/NotificationPanel';
 import ProductManager from './components/ProductManager';
 import Dashboard from './components/Dashboard';
+import './App.css';
+import Home from './Home';
 
 
 
@@ -19,6 +21,7 @@ function App() {
       <Router>
         <div className="App">
           <Routes>
+            <Route path="/" element={<Home/>} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/dashboard" element={<Dashboard/>

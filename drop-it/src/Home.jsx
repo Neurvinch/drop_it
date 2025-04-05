@@ -4,7 +4,7 @@ import ScrollTrigger from 'gsap/ScrollTrigger';
 import * as THREE from 'three';
 import './AwardsSection.css';
 
-const AwardsSection = () => {
+const   Home = () => {
   
   const sectionRef = useRef(null);
   const threeContainerRef = useRef(null);
@@ -276,7 +276,7 @@ const AwardsSection = () => {
       </div>
     
       <div className="imageBoard">
-      <div className="text-[130px] ml-20 font-black bg-[#87ff60]">Dispose wisely, save!</div>
+      <div className="text-[130px] ml-20 font-bold bg-[#87ff60]">Clean Tomorrow, Starts Today.</div>
   <div className="flex justify-center gap-4 mt-4">
     <img src="/im4.jpg" alt="icon1" className="w-80 h-80" />
     <img src="/im5.jpg" alt="icon2" className="w-80 h-80" />
@@ -291,8 +291,8 @@ const AwardsSection = () => {
       </div>
       
       <div className="boxes-section flex flex-col items-center relative">
-  <h2 className="text-center text-8xl font-bold">EXPLORE OUR WORK</h2>
-  <p className="pt-20 text-4xl text-center max-w-3xl">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Neque inventore dolore cum eius fuga sint aliquid quaerat natus corrupti ab, quia iusto? Deleniti tempora alias nam eaque, reiciendis fugit atque!</p>
+  <h2 className="text-center text-8xl font-bold">Find Waste Shops Near You</h2>
+  <p className="pt-20 text-4xl text-center max-w-3xl">Easily find nearby waste collection centers, contact them directly, and contribute to a cleaner, greener community.</p>
   
   <div className="relative ">
     <img src="/iii.png" alt="icon2" className="w-[900px] relative z-10 mt-10" />
@@ -314,7 +314,8 @@ const AwardsSection = () => {
 
   {/* Paragraph */}
   <p className="pt-20 text-4xl text-center max-w-3xl z-10">
-    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Neque inventore dolore cum eius fuga sint aliquid quaerat natus corrupti ab, quia iusto? Deleniti tempora alias nam eaque, reiciendis fugit atque!
+  Our smart platform uses your location to list nearby waste centers and even recommends the right type of shop based on your waste. Whether it’s old electronics, plastic, or hazardous items — we've got the right place for it.
+  Together, let’s make responsible disposal easy and accessible.
   </p>
   <div className="sign-in-section">
         <button className="sign-in-button">SIGN IN</button>
@@ -326,4 +327,4 @@ const AwardsSection = () => {
   );
 };
 
-export default AwardsSection;
+export default Home;
