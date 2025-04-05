@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const register = async (username, email, password, roles) => {
-    const res = await axios.post(`${import.meta.env.REACT_APP_API_URL}/register`, { username, email, password, roles });
+    const res = await axios.post("http://localhost:5000/api/register", { username, email, password, roles });
     setUser(res.data.user);
     setToken(res.data.token);
     localStorage.setItem('token', res.data.token);

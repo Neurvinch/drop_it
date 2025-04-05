@@ -46,10 +46,10 @@ router.post('/register', async (req, res) => {
 
 // Login a user
 router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
+  const { username, password } = req.body;
 
   try {
-    const existingUser = await UserModel.findOne({ email }).select('+password');
+    const existingUser = await UserModel.findOne({ username }).select('+password');
     if (!existingUser) {
       return res.status(404).json({
         success: false,
