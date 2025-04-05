@@ -13,6 +13,7 @@ const notification = require('./Controllers/notify');
 const transaction = require("./Controllers/transaction");
 const wishlist = require("./Routes/wishlist")
 const identifier = require("./Middleware/identifier");
+ const socketIO = require('socket.io');
 
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
@@ -20,7 +21,7 @@ const cors = require("cors");
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: '*' } });
+
 
 app.use(express.json());
 app.use(cookieParser());
@@ -32,6 +33,13 @@ app.use(
     credentials: true,
   })
 );
+const io = socketIO(server, {
+  cors: {
+    origin: 'http://localhost:5173',
+    methods: ['GET', 'POST'],
+    credentials: true
+  }
+});
 
 app.set('io', io);
 
