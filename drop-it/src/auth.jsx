@@ -9,14 +9,14 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('token') || null);
 
   const login = async (email, password) => {
-    const res = await axios.post(`${process.env.REACT_APP_API_URL}/login`, { email, password });
+    const res = await axios.post(`${import.meta.env.REACT_APP_API_URL}/login`, { email, password });
     setUser(res.data.user);
     setToken(res.data.token);
     localStorage.setItem('token', res.data.token);
   };
 
-  const register = async (username, email, password, role) => {
-    const res = await axios.post(`${process.env.REACT_APP_API_URL}/register`, { username, email, password, role });
+  const register = async (username, email, password, roles) => {
+    const res = await axios.post(`${import.meta.env.REACT_APP_API_URL}/register`, { username, email, password, roles });
     setUser(res.data.user);
     setToken(res.data.token);
     localStorage.setItem('token', res.data.token);
