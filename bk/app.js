@@ -12,6 +12,7 @@ const profile = require("./Controllers/profile");
 const notification = require('./Controllers/notify');
 const transaction = require("./Controllers/transaction");
 const wishlist = require("./Controllers/wishList")
+const identifier = require("./Middleware/identifier");
 
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
@@ -33,6 +34,7 @@ app.use(
 );
 
 app.set('io', io);
+app.use('/api', identifier(['User', 'Vendor', 'Industrialist', 'Admin']));
 app.use("/api", Auth ,wishlist, Auction, bid, cart, order, product, profile, notification, transaction);
 
 mongoose

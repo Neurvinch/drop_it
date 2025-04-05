@@ -4,7 +4,7 @@ const Product = require('../Models/ProductSchema'); // Adjust path as needed
 const router = express.Router();
 
 // Create a new product
-router.post('/', async (req, res) => {
+router.post('/products', async (req, res) => {
   const { name, description, category, condition, starting_price, image_urls } = req.body;
 
   try {
@@ -31,7 +31,7 @@ router.post('/', async (req, res) => {
 });
 
 // Get all unsold products
-router.get('/', async (req, res) => {
+router.get('/products', async (req, res) => {
   try {
     const products = await Product.find({ is_sold: false }).populate('seller_id', 'username');
 

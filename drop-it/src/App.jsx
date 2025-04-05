@@ -8,6 +8,7 @@ import ProductList from './components/ProductList';
 import AuctionList from './components/AuctionList';
 import BidForm from './components/BidForm';
 import NotificationPanel from './components/NotificationPanel';
+import ProductManager from './components/ProductManager';
 
 const PrivateRoute = ({ children }) => {
   const { token } = useAuth();
@@ -26,6 +27,7 @@ function App() {
             <Route path="/auctions" element={<PrivateRoute><AuctionList /></PrivateRoute>} />
             <Route path="/bid/:auctionId" element={<PrivateRoute><BidForm /></PrivateRoute>} />
             <Route path="/notifications" element={<PrivateRoute><NotificationPanel /></PrivateRoute>} />
+            <Route path='/create-Product' element={<ProductManager/>}   />
             <Route path="/" element={<Navigate to="/products" />} />
           </Routes>
         </div>
