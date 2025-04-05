@@ -1,3 +1,21 @@
+<<<<<<< HEAD
+import React from 'react';
+import AwardsSection from './AwardsSection';
+import './App.css';
+const Page = () => {
+  return (
+    <div className="page-container">
+      {/* Other content before the animation */}
+      
+      <AwardsSection />
+      
+      {/* Other content after the animation */}
+    </div>
+  );
+};
+
+export default Page;
+=======
 // src/App.js
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
@@ -34,3 +52,4 @@ function App() {
 }
 
 export default App;
+>>>>>>> fb78d128feae2d526fafc6f360c131fb47a11a97
