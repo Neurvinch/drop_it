@@ -18,6 +18,7 @@ const productSchema = new mongoose.Schema({
     enum: ["New", "Used", "Refurbished"],
     required: true,
   },
+  ecoImpact: { type: Number, default: 0 },
   seller_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "UserModel",

@@ -1,40 +1,30 @@
 // routes/orders.js
 const express = require('express');
 const Order = require('../models/Order');
-const Cart = require('../models/Cart');
 const Product = require('../models/Product');
 const router = express.Router();
 
-// Place an order from cart
+// Place an order (simplified for Razorpay)
 router.post('/:userId', async (req, res) => {
-  const cart = await Cart.findOne({ userId: req.params.userId }).populate('items.productId');
-  if (!cart || cart.items.length === 0) return res.status(400).json({ message: 'Cart is empty' });
+  const { userId } = req.params;
+  const { items, paymentId } = req.body; // paymentId from Razorpay frontend
 
-  const items = cart.items.map(item => ({
-    productId: item.productId._id,
-    quantity: item.quantity,
-    price: item.productId.price,
-  }));
+  // Verify payment with Razorpay (optional, add later)
   const totalAmount = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-
-  const order = new Order({ userId: req.params.userId, items, totalAmount });
+  const order = new Order({ userId, items, totalAmount, paymentId });
   await order.save();
 
   // Update product stock
-  for (const item of cart.items) {
+  for (const item of items) {
     const product = await Product.findById(item.productId);
     product.stock -= item.quantity;
     await product.save();
   }
 
-  // Clear cart
-  cart.items = [];
-  await cart.save();
-
   res.status(201).json(order);
 });
 
-// Get order history
+// Get order history (unchanged)
 router.get('/:userId', async (req, res) => {
   const orders = await Order.find({ userId: req.params.userId }).populate('items.productId');
   res.json(orders);

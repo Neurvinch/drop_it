@@ -21,9 +21,36 @@ const Cart = () => {
   };
 
   const checkout = async () => {
-    await axios.post('http://localhost:5000/api/orders/user_id_here');
-    setCart({ items: [] });
-    history.push('/orders');
+    const totalAmount = cart.items.reduce((sum, item) => sum + item.productId.price * item.quantity, 0);
+    const { data } = await axios.post('http://localhost:5000/api/create-order', {
+      amount: totalAmount * 100, // Convert to paise
+    });
+
+    const options = {
+      key: 'your_razorpay_key_id', // Add your Razorpay key here
+      amount: data.amount,
+      currency: data.currency,
+      name: 'Recycled Goods Store',
+      description: 'Cart Checkout',
+      order_id: data.id,
+      handler: async (response) => {
+        await axios.post('http://localhost:5000/api/orders/user_id_here', {
+          items: cart.items.map(item => ({
+            productId: item.productId._id,
+            quantity: item.quantity,
+            price: item.productId.price,
+          })),
+          paymentId: response.razorpay_payment_id,
+        });
+        setCart({ items: [] });
+        history.push('/orders');
+      },
+      prefill: { name: 'User Name', email: 'user@example.com' },
+      theme: { color: '#F37254' },
+    };
+
+    const rzp = new window.Razorpay(options);
+    rzp.open();
   };
 
   if (!cart) return <div>Loading...</div>;

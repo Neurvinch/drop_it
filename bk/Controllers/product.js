@@ -42,3 +42,13 @@ exports.getProducts = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+// routes/products.js
+router.get('/:id/recommendations', async (req, res) => {
+  const product = await Product.findById(req.params.id);
+  const recommendations = await Product.find({
+    category: product.category,
+    _id: { $ne: product._id },
+  }).limit(5);
+  res.json(recommendations);
+});
