@@ -28,7 +28,9 @@ app.use(cookieParser());
 // Set CORS options to allow requests from your frontend and include credentials
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin:
+    // "http://localhost:5173" 
+   " https://drop-it-beta.vercel.app/"     ,
     credentials: true,
   })
 );
