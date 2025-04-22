@@ -3,6 +3,9 @@ const express = require('express');
 const  Notification  = require('../models/notificationSchema'); // Adjust path as needed
 const router = express.Router();
 
+
+
+
 // Get all notifications for the authenticated user
 router.get('/', async (req, res) => {
   try {
