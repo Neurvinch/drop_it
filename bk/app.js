@@ -29,8 +29,8 @@ app.use(cookieParser());
 app.use(
   cors({
     origin:
-    // "http://localhost:5173" 
-   " https://drop-it-beta.vercel.app/"     ,
+     "http://localhost:5173" ,
+  //  " https://drop-it-beta.vercel.app/"     ,
     credentials: true,
   })
 );
